@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Wed Feb 26 09:48:29 KST 2020-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Accounting.acc.accountledger.dao.AccountLedgerDAO">
+
+
+
+	<!--     &lt;!&ndash;   =====================================  2020-08-25 계정별 원장 조편백   시작 ====================================   &ndash;&gt;-->
+
+	<resultMap type="com.project.Accounting.acc.accountledger.dto.LedgerByAccountDTO" id="ledgerByAccountResult">
+		<result property="carryForward" column="CARRY_FORWARD"/>
+		<result property="reportingDate" column="REPORTING_DATE"/>
+		<result property="acctName" column="ACCT_NAME"/>
+		<result property="leftDebtorPrice" column="LEFT_DEBTOR_PRICE"/>
+		<result property="rightCreditsPrice" column="RIGHT_CREDITS_PRICE"/>
+		<result property="totalPrice" column="TOTAL_PRICE"/>
+
+	</resultMap>
+
+	<parameterMap id="getLedgerByAccountInfoParam" type="map">
+		<parameter property="accountCode" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+		<parameter property="startDate" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+		<parameter property="endDate" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+		<parameter property="ERROR_CODE" jdbcType="DECIMAL" javaType="java.lang.Integer" mode="OUT"/>
+		<parameter property="ERROR_MSG" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+		<parameter property="RESULT" jdbcType="CURSOR" javaType="java.sql.ResultSet" resultMap="ledgerByAccountResult" mode="OUT"/>
+	</parameterMap>
+
+	<select id="getLedgerbyAccountInfo"  parameterMap="getLedgerByAccountInfoParam" statementType="CALLABLE">
+	<![CDATA[
+		{call P_LEDGERBY_ACCOUNT(?, ?, ?, ?, ?, ?)}
+
+		]]>
+	</select>
+
+	<select id="selectGeneralAccountLedgerList" parameterType="Map" resultType="com.project.Accounting.acc.accountledger.dto.GeneralAccountLedgerDTO">
+      <![CDATA[
+		SELECT s.REPORTING_DATE, --작성일자
+			   a.ACCT_NAME, --회계계정
+			   j.LEFT_DEBTOR_PRICE, -- 차변금액
+			   j.RIGHT_CREDITS_PRICE, --대변금액
+			   (SELECT c.CTER_NAME
+				FROM CUSTOMER C
+				WHERE c.CTER_CODE=j.CTER_CODE ) CTER_NAME, --거래처
+			   s.EXPENSE_REPORT -- 적요
+		FROM SLIP S
+		   , JOURNAL J
+		   , ACCOUNT A
+		WHERE S.SLIP_NO = J.SLIP_NO
+		  AND J.ACCT_INNER_CODE = A.ACCT_INNER_CODE
+		  AND S.REPORTING_DATE BETWEEN #{fromDate} AND #{toDate}
+		  AND S.SLIP_STATUS = '승인완료'
+		ORDER BY S.REPORTING_DATE
+		]]>
+    </select>
+
+
+
+
+</mapper>

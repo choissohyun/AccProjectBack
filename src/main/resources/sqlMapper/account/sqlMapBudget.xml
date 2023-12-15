@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Wed Feb 26 09:48:29 KST 2020-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Accounting.acc.budget.dao.BudgetDAO">
+
+
+<!--    예산신청입력 전기 데이터 불러오기 시작-->
+    <resultMap id="getPreviousYearBudgetStatusResult" type="com.project.Accounting.acc.budget.dto.PreviousYearBudgetStatusDTO" >
+        <result property="m1Budget" column="M1_BUDGET" />
+        <result property="m2Budget" column="M2_BUDGET" />
+        <result property="m3Budget" column="M3_BUDGET" />
+        <result property="m4Budget" column="M4_BUDGET" />
+        <result property="m5Budget" column="M5_BUDGET" />
+        <result property="m6Budget" column="M6_BUDGET" />
+        <result property="m7Budget" column="M7_BUDGET" />
+        <result property="m8Budget" column="M8_BUDGET" />
+        <result property="m9Budget" column="M9_BUDGET" />
+        <result property="m10Budget" column="M10_BUDGET" />
+        <result property="m11Budget" column="M11_BUDGET" />
+        <result property="m12Budget" column="M12_BUDGET" />
+    </resultMap>
+
+    <parameterMap id="getPreviousYearBudgetStatusParam" type="Map">
+        <parameter property="deptCode" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+        <parameter property="reportDate" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+        <parameter property="acctInnerCode" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+        <parameter property="ERROR_CODE" jdbcType="DECIMAL" javaType="java.lang.Integer" mode="OUT" />
+        <parameter property="ERROR_MSG" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT" />
+        <parameter property="RESULT" jdbcType="CURSOR" javaType="java.sql.ResultSet" resultMap="getPreviousYearBudgetStatusResult" mode="OUT" />
+    </parameterMap>
+
+    <select id="getPreviousYearBudgetStatus" parameterMap="getPreviousYearBudgetStatusParam" statementType="CALLABLE">
+		<![CDATA[
+        {call P_PREVIOUS_BUDGET_STATUS(?,?,?,?,?,?)}
+        ]]>
+	</select>
+
+    <!--    예산신청입력 전기 데이터 불러오기 끝 -->
+
+    <select id="saveBudget" parameterType="com.project.Accounting.acc.budget.dto.BudgetDto">
+    <![CDATA[
+        INSERT INTO BUDGET(DEPT_CODE, WORKPLACE_CODE, ACCT_INNER_CODE, ACCT_PERIOD_NO, BUDGETING_CODE, M1_BUDGET, M2_BUDGET, M3_BUDGET,M4_BUDGET, M5_BUDGET, M6_BUDGET, M7_BUDGET, M8_BUDGET, M9_BUDGET, M10_BUDGET, M11_BUDGET, M12_BUDGET)
+        VALUES(#{deptCode}, #{workplaceCode}, #{acctInnerCode}, #{acctPeriodNo}, #{budgetingCode}, #{m1Budget}, #{m2Budget}, #{m3Budget}, #{m4Budget}, #{m5Budget}, #{m6Budget}, #{m7Budget}, #{m8Budget}, #{m9Budget}, #{m10Budget}, #{m11Budget}, #{m12Budget})
+        ]]>
+    </select>
+</mapper>
